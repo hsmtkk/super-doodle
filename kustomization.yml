@@ -1,6 +1,7 @@
 ---
 resources:
   - cloudprober.yml
+  - grafana.yml
   - ingress.yml
   - prometheus.yml
 configMapGenerator:
