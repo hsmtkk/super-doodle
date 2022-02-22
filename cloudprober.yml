@@ -56,3 +56,21 @@ spec:
     app: super-doodle-cloudprober
   ports:
     - port: 9313
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+  name: super-doodle-cloudprober
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /cloudprober(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: super-doodle-cloudprober
+                port: 
+                  number: 9313
