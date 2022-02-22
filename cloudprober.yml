@@ -1,0 +1,58 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: super-doodle-cloudprober
+  labels:
+    app: super-doodle-cloudprober
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: super-doodle-cloudprober
+  template:
+    metadata:
+      labels:
+        app: super-doodle-cloudprober
+    spec:
+      containers:
+        - name: cloudprober
+          image: cloudprober/cloudprober:latest
+          imagePullPolicy: Always
+          command:
+            - /cloudprober
+          args:
+            - --config_file
+            - /cfg/cloudprober.cfg
+            - --logtostderr
+          ports:
+            - containerPort: 9313
+          volumeMounts:
+            - name: config
+              mountPath: /cfg
+          startupProbe:
+            httpGet:
+              path: /metrics
+              port: 9313
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: 9313
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: 9313
+      volumes:
+        - name: config
+          configMap:
+            name: super-doodle-cloudprober
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: super-doodle-cloudprober
+spec:
+  selector:
+    app: super-doodle-cloudprober
+  ports:
+    - port: 9313

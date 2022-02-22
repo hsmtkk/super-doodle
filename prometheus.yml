@@ -1,0 +1,52 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: super-doodle-prometheus
+  labels:
+    app: super-doodle-prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: super-doodle-prometheus
+  template:
+    metadata:
+      labels:
+        app: super-doodle-prometheus
+    spec:
+      containers:
+        - name: prometheus
+          image: prom/prometheus:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9090
+          volumeMounts:
+            - name: config
+              mountPath: /etc/prometheus
+          startupProbe:
+            httpGet:
+              path: /metrics
+              port: 9090
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: 9090
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: 9090
+      volumes:
+        - name: config
+          configMap:
+            name: super-doodle-prometheus
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: super-doodle-prometheus
+spec:
+  selector:
+    app: super-doodle-prometheus
+  ports:
+    - port: 9090

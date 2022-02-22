@@ -1,0 +1,12 @@
+---
+resources:
+  - cloudprober.yml
+  - ingress.yml
+  - prometheus.yml
+configMapGenerator:
+  - name: super-doodle-cloudprober
+    files:
+      - cloudprober/cloudprober.cfg
+  - name: super-doodle-prometheus
+    files:
+      - prometheus/prometheus.yml
